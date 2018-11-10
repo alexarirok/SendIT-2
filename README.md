@@ -121,7 +121,7 @@ Most recent version is version 1
 
 ## Authors
 
-Gitau Leon.
+Gitau Harrison.
 
 ## License
 
