@@ -7,7 +7,8 @@ install:
 before_script:
   - source ./.travis.sh
 script:
-  - python -m pytest --cov-report term-missing --cov=resources
+  # - python -m pytest --cov-report term-missing --cov=views
+  - pytest --cov app
 after_success:
   - coveralls
 notifications:
