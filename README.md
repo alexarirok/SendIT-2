@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/Gitau/Parcel-My-Way.svg?branch=Develop-V1-API)](https://travis-ci.org/Gitau/Parcel-My-Way)
-[![Coverage Status](https://coveralls.io/repos/github/Gitau/Parcel-My-Way/badge.svg?branch=Develop-V1-API)](https://coveralls.io/github/Gitau/Parcel-My-Way?branch=Develop-V1-API)
+[![Build Status](https://travis-ci.org/Harrison-Gitau/SendIT-2.svg?branch=Ft-User-Fetch-All-%23161836320)](https://travis-ci.org/Harrison-Gitau/SendIT-2)
+[![Coverage Status](https://coveralls.io/repos/github/Harrison-Gitau/SendIT-2/badge.svg?branch=Ft-User-Fetch-All-%23161836320)](https://coveralls.io/github/Harrison-Gitau/SendIT-2?branch=Ft-User-Fetch-All-%23161836320)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-green.svg)](https://www.python.org/dev/peps/pep-0008/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
