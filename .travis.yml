@@ -11,6 +11,10 @@ script:
   - pytest --cov app
 after_success:
   - coveralls
+
+branches:
+  - Ft-User-Fetch-All-#23161836320
+  - develop
 notifications:
 
   email: false
