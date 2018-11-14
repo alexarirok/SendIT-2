@@ -99,3 +99,4 @@ def admin2_required(f):
                 "message" : "kindly provide a valid token in the header"}), 401)
 
     return decorated
+    
