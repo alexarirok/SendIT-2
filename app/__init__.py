@@ -14,3 +14,4 @@ def create_app(configuration):
     app.register_blueprint(users_api, url_prefix='/api/v1')
 
     return app
+    
