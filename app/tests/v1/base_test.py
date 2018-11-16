@@ -1,4 +1,4 @@
-"""Authenticate a user, adminU and an admin to be used during testing
+"""Authenticate a user, admin and an admin to be used during testing
 Set up required items to be used during testing
 """
 # pylint: disable=W0612
@@ -11,7 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import app
-from app.api.v1.models import models
+from app.api.v1.models import users, parcels
 
 
 class BaseTests(unittest.TestCase):
@@ -26,15 +26,15 @@ class BaseTests(unittest.TestCase):
             "password" : "12345678",
             "confirm" : "12345678"})
 
-        adminU_reg = json.dumps({
-            "username" : "adminU1",
-            "email" : "adminU1@gmail.com",
+        admin_reg = json.dumps({
+            "username" : "admin1",
+            "email" : "admin1@gmail.com",
             "password" : "123456789",
             "confirm" : "123456789"})
         
-        adminU_reg2 = json.dumps({
-            "username" : "adminU2",
-            "email" : "adminU2@gmail.com",
+        admin_reg2 = json.dumps({
+            "username" : "admin2",
+            "email" : "admin2@gmail.com",
             "password" : "123456789",
             "confirm" : "123456789"})
 
@@ -42,55 +42,55 @@ class BaseTests(unittest.TestCase):
             "email" : "user@gmail.com",
             "password" : "12345678"})
 
-        self.adminU_log = json.dumps({
-            "email" : "adminU1@gmail.com",
+        self.admin_log1 = json.dumps({
+            "email" : "admin1@gmail.com",
             "password" : "123456789"})
         
-        self.adminU_log2 = json.dumps({
-            "email" : "adminU2@gmail.com",
+        self.admin_log2 = json.dumps({
+            "email" : "admin2@gmail.com",
             "password" : "123456789"})
 
         self.admin_log = json.dumps({
             "email" : "admin@gmail.com",
-            "password" : "adminU234"})
+            "password" : "admin234"})
 
         self.app = self.application.test_client()
 
         
         register_user = self.app.post(
-            '/api/v1/auth/userregister', data=user_reg,
+            '/api/v1/auth/user-register', data=user_reg,
             content_type='application/json')
-        register_adminU = self.app.post(
-            '/api/v1/auth/adminUregister', data=adminU_reg,
+        register_admin = self.app.post(
+            '/api/v1/auth/admin-register', data=admin_reg,
             content_type='application/json')
         
-        register_adminU = self.app.post(
-            '/api/v1/auth/adminUregister', data=adminU_reg2,
+        register_admin = self.app.post(
+            '/api/v1/auth/admin-register', data=admin_reg2,
             content_type='application/json')
         
         admin_result = self.app.post(
-            '/api/v1/auth/login', data=self.admin_log,
+            '/api/v1/auth/login', data=self.admin_log1,
             content_type='application/json')
         
         admin_response = json.loads(admin_result.get_data(as_text=True))
         admin_token = admin_response["token"]
         self.admin_header = {"Content-Type" : "application/json", "x-access-token" : admin_token}
 
-        adminU_result = self.app.post(
-            '/api/v1/auth/login', data=self.adminU_log,
+        admin_result = self.app.post(
+            '/api/v1/auth/login', data=self.admin_log,
             content_type='application/json')
 
-        adminU_response = json.loads(adminU_result.get_data(as_text=True))
-        adminU_token = adminU_response["token"]
-        self.adminU_header = {"Content-Type" : "application/json", "x-access-token" : adminU_token}
+        admin_response = json.loads(admin_result.get_data(as_text=True))
+        admin_token = admin_response["token"]
+        self.admin_header = {"Content-Type" : "application/json", "x-access-token" : admin_token}
 
-        adminU_result2 = self.app.post(
-            '/api/v1/auth/login', data=self.adminU_log2,
+        admin_result2 = self.app.post(
+            '/api/v1/auth/login', data=self.admin_log2,
             content_type='application/json')
 
-        adminU_response2 = json.loads(adminU_result2.get_data(as_text=True))
-        adminU_token2 = adminU_response2["token"]
-        self.adminU_header2 = {"Content-Type" : "application/json", "x-access-token" : adminU_token2}
+        admin_response2 = json.loads(admin_result2.get_data(as_text=True))
+        admin_token2 = admin_response2["token"]
+        self.admin_header2 = {"Content-Type" : "application/json", "x-access-token" : admin_token2}
         
         user_result = self.app.post(
             '/api/v1/auth/login', data=self.user_log,
@@ -108,11 +108,11 @@ class BaseTests(unittest.TestCase):
 
         create_parcel = self.app.post(
             '/api/v1/parcels', data=parcel, content_type='application/json',
-            headers=self.adminU_header)
+            headers=self.admin_header)
 
         create_parcel2 = self.app.post(
             '/api/v1/parcels', data=parcel2, content_type='application/json',
-            headers=self.adminU_header)
+            headers=self.admin_header)
 
         requestparcel = self.app.post(
             '/api/v1/parcels/1/cancels',
@@ -125,13 +125,13 @@ class BaseTests(unittest.TestCase):
     def tearDown(self):
         with self.application.app_context():
 
-            models.all_users = { 1 : {"id": "1", "username" : "admin",
-            "email" : "admin@gmail.com", "password" : generate_password_hash("adminU234", method='sha256'), "usertype" : "admin",
+            users.all_users = { 1 : {"id": "1", "username" : "admin",
+            "email" : "admin@gmail.com", "password" : generate_password_hash("admin234", method='sha256'), "usertype" : "admin",
             },}
-            models.user_count = 2
+            users.user_count = 2
 
-            models.all_parcels = {}
-            models.parcel_count = 1
+            parcels.all_parcels = {}
+            parcels.parcel_count = 1
 
-            models.all_cancels = {}
-            models.request_count = 1
+            parcels.all_cancels = {}
+            parcels.request_count = 1
