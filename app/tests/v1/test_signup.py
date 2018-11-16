@@ -19,7 +19,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "mark", "email" : "mark@gmail.com",
             "password" : "secret12345", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 201)
 
     def test_same_email_signup(self):
@@ -29,17 +29,17 @@ class SignupTests(BaseTests):
             "email" : "user@gmail.com",
             "password" : "12345678",
             "confirm" : "12345678"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
-    def test_same_email_signup_adminU(self):
+    def test_same_email_signup_admin(self):
         """Tests successfully signing up"""
         data = json.dumps({
-            "username" : "adminU1",
-            "email" : "adminU1@gmail.com",
+            "username" : "admin1",
+            "email" : "admin1@gmail.com",
             "password" : "123456789",
             "confirm" : "123456789"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_diff_passwords(self):
@@ -47,7 +47,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "felix", "email" : "felix@gmail.com",
             "password" : "12345678", "confirm" : "passwordsecret"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_short_passwords(self):
@@ -55,7 +55,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "moses", "email" : "moses@gmail.com",
             "password" : "1234567", "confirm" : "1234567"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_username(self):
@@ -63,7 +63,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "", "email" : "emptyusername@gmail.com",
             "password" : "12345678", "confirm" : "12345678"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_invalid_email(self):
@@ -71,7 +71,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "invalidemail.com",
             "password" : "secret12345", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_password(self):
@@ -79,7 +79,7 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "lennymutush@gmail.com",
             "password" : "", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_conf_password(self):
@@ -87,10 +87,10 @@ class SignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "confpassword@gmail.com",
             "password" : "secret", "confirm" : ""})
-        response = self.app.post('/api/v1/auth/userregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/user-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
-class AdminUSignupTests(BaseTests):
+class adminSignupTests(BaseTests):
     """Tests functionality of the signup endpoint"""
 
 
@@ -99,7 +99,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "mark", "email" : "mark2@gmail.com",
             "password" : "secret12345", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 201)
 
     def test_signup_diff_passwords(self):
@@ -107,7 +107,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "felix", "email" : "felix@gmail.com",
             "password" : "12345678", "confirm" : "passwordsecret"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_short_passwords(self):
@@ -115,7 +115,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "moses", "email" : "moses@gmail.com",
             "password" : "1234567", "confirm" : "1234567"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_username(self):
@@ -123,7 +123,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "", "email" : "emptyusername@gmail.com",
             "password" : "12345678", "confirm" : "12345678"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_invalid_email(self):
@@ -131,7 +131,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "invalidemail.com",
             "password" : "secret12345", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_password(self):
@@ -139,7 +139,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "lennymutush@gmail.com",
             "password" : "", "confirm" : "secret12345"})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
     def test_signup_empty_conf_password(self):
@@ -147,7 +147,7 @@ class AdminUSignupTests(BaseTests):
         data = json.dumps({
             "username" : "lenny", "email" : "confpassword@gmail.com",
             "password" : "secret", "confirm" : ""})
-        response = self.app.post('/api/v1/auth/adminUregister', data=data, content_type='application/json')
+        response = self.app.post('/api/v1/auth/admin-register', data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
 if __name__ == '__main__':

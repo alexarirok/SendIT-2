@@ -7,7 +7,7 @@ import sys # fix import errors
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.api.v1.models import models
+# from app.api.v1.models import models
 from .base_test import BaseTests
 
 class LoginTests(BaseTests):

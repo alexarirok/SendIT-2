@@ -7,7 +7,7 @@ import sys # fix import errors
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.api.v1.models import models
+from app.api.v1.models import users, parcels
 from .base_test import BaseTests
 
 
@@ -37,7 +37,7 @@ class UsersTest(BaseTests):
             "email" : "update1@gmail.com",
             "password" : "123456789",
             "confirm" : "123456789",
-            "usertype" : "adminU"})
+            "usertype" : "admin"})
         response = self.app.put(
             '/api/v1/users/3/parcels', data=data,
             content_type='application/json',
