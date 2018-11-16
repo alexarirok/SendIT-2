@@ -88,7 +88,7 @@ class Requests(object):
                                        "cancel_order": cancel_order, "status" : status}
         request_count += 1
 
-        return {"message" : "the cancel     request has been sent for approval"}
+        return {"message" : "the cancel request has been sent for approval"}
 
     @staticmethod
     def update_request(request_id):
