@@ -5,9 +5,9 @@ from flask_restful import Resource, Api, reqparse
 import jwt
 
 
-from ..models import models
+from ..models import users, parcels
 from instance import config
-from ..utils.decorators import user_required, admin1_required, admin2_required
+from ..utils.decorators import user_required, admin_required
 
 
 class ParcelList(Resource):
@@ -43,21 +43,21 @@ class ParcelList(Resource):
             location=['form', 'json'])
         super().__init__()
 
-    @admin1_required
+    @admin_required
     def post(self):
         """Adds a new parcel"""
         kwargs = self.reqparse.parse_args()
 
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        adminU_id = data['id']
+        admin_id = data['id']
 
-        result = models.Parcel.create_parcel(adminUid=adminU_id, **kwargs)
+        result = parcels.Parcel.create_parcel(adminid=admin_id, **kwargs)
         return make_response(jsonify(result), 201)
 
     def get(self):
         """Gets all parcels"""
-        return make_response(jsonify(models.all_parcels), 200)
+        return make_response(jsonify(parcels.all_parcels), 200)
 
 class Parcel(Resource):
     """Contains GET, PUT and DELETE methods for manipulating a single parcel"""
@@ -94,41 +94,41 @@ class Parcel(Resource):
     def get(self, parcel_id):
         """Get a particular parcel"""
         try:
-            parcel = models.all_parcels[parcel_id]
+            parcel = parcels.all_parcels[parcel_id]
             return make_response(jsonify(parcel), 200)
         except KeyError:
             return make_response(jsonify({"message" : "parcel does not exist"}), 404)
 
-    @admin1_required
+    @admin_required
     def post(self, parcel_id):
         """start a particular parcel"""
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        adminU_id = data['id']
+        admin_id = data['id']
 
-        result = models.Parcel.start_parcel_delivery(parcel_id, adminU_id=adminU_id)
+        result = parcels.Parcel.start_parcel_delivery(parcel_id, admin_id=admin_id)
         if result == {"message" : "parcel delivery started"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
 
-    @admin1_required
+    @admin_required
     def put(self, parcel_id):
         """Update a particular parcel"""
         kwargs = self.reqparse.parse_args()
 
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        adminU_id = data['id']
+        admin_id = data['id']
 
-        result = models.Parcel.update_parcel(parcel_id, adminUid=adminU_id, **kwargs)
+        result = parcels.Parcel.update_parcel(parcel_id, adminid=admin_id, **kwargs)
         if result != {"message" : "parcel does not exist"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
 
-    @admin2_required
+    @admin_required
     def delete(self, parcel_id):
         """Delete a particular parcel"""
-        result = models.Parcel.delete_parcel(parcel_id)
+        result = parcels.Parcel.delete_parcel(parcel_id)
         if result != {"message" : "the parcel does not exist"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
@@ -144,16 +144,16 @@ class RequestParcel(Resource):
         data = jwt.decode(token, config.Config.SECRET_KEY)
         user_id = data['id']
 
-        result = models.Requests.request_parcel(parcel_id=parcel_id, user_id=user_id)
+        result = parcels.Requests.request_parcel(parcel_id=parcel_id, user_id=user_id)
         return make_response(jsonify(result), 201)
 
 class RequestList(Resource):
     """Contains GET method to get all cancels"""
 
-    @admin2_required
+    @admin_required
     def get(self):
         """Gets all cancels"""
-        return make_response(jsonify(models.all_cancels), 200)
+        return make_response(jsonify(parcels.all_cancels), 200)
 
 class Request(Resource):
     """Contains GET, PUT and DELETE methods for manipulating a single request"""
@@ -163,24 +163,24 @@ class Request(Resource):
     def get(self, request_id):
         """Get a particular request"""
         try:
-            parcel = models.all_cancels[request_id]
+            parcel = parcels.all_cancels[request_id]
             return make_response(jsonify(parcel), 200)
         except KeyError:
             return make_response(jsonify({"message" : "specified request does not exist"}), 404)
 
-    @admin1_required
+    @admin_required
     def put(self, request_id):
         """accept/reject a particular request"""
 
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        adminU_id = data['id']
+        admin_id = data['id']
 
 
-        result = models.all_cancels.get(request_id)
+        result = parcels.all_cancels.get(request_id)
         if result != None:
-            if models.all_parcels[result["parcel_id"]]["adminU_id"] == adminU_id:
-                update = models.Requests.update_request(request_id)
+            if parcels.all_parcels[result["parcel_id"]]["admin_id"] == admin_id:
+                update = parcels.Requests.update_request(request_id)
                 return make_response(jsonify(update), 200)
             return make_response(jsonify({
                 "message" : "the parcel request you are updating is not of your parcel"}), 404)
@@ -194,10 +194,10 @@ class Request(Resource):
         data = jwt.decode(token, config.Config.SECRET_KEY)
         currentuser_id = data['id']
 
-        result = models.all_cancels.get(request_id)
+        result = parcels.all_cancels.get(request_id)
         if result != None:
             if result["user_id"] == currentuser_id:
-                delete = models.Requests.delete_request(request_id)
+                delete = parcels.Requests.delete_request(request_id)
                 return make_response(jsonify(delete), 200)
             return make_response(jsonify({
                 "message" : "the parcel request you are deleting is not your request"}), 404)
