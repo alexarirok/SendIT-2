@@ -1,13 +1,11 @@
-
 from werkzeug.security import generate_password_hash
-
+from .parcels import all_parcels, all_cancels
 
 all_users = {1 : {"id": "1", 
                   "username" : "admin",
                   "email" : "admin@gmail.com",
-                  "password" : generate_password_hash("adminU234", method='sha256'),
+                  "password" : generate_password_hash("admin234", method='sha256'),
                   "usertype" : "admin",},}
-
 user_count = 2
 class User(object):
     """Contains methods to add, update and delete a user"""
@@ -57,7 +55,7 @@ class User(object):
         for user in all_users:
             user = all_users[user]
 
-            if user["usertype"] == "adminU":
+            if user["usertype"] == "admin":
                 profile = {user['id'] : {
                     "Username" : user['username'], 
                     "Email" : user['email'],
@@ -67,7 +65,7 @@ class User(object):
                     
                 for parcel in all_parcels:
                     parcel = all_parcels[parcel]
-                    if parcel["adminU_id"] == user["id"]:
+                    if parcel["admin_id"] == user["id"]:
                         if parcel["status"] == "IN TRANSIT":
                             profile[user['id']]["Parcels already IN TRANSIT"].append(parcel["trip"])
                         profile[user['id']]["Parcels UNDELIVERED"].append(parcel["trip"])
@@ -97,14 +95,14 @@ class User(object):
 
         user = all_users[user_id]
 
-        if user["usertype"] == "adminU":
+        if user["usertype"] == "admin":
             profile = {user['id'] : {"Username" : user['username'], "Email" : user['email'],
                                      "Usertype" : user['usertype'],
                                      "Parcels already IN TRANSIT" : [], "Parcels UNDELIVERED" : []}}
 
             for parcel in all_parcels:
                 parcel = all_parcels[parcel]
-                if parcel["adminU_id"] == user_id:
+                if parcel["admin_id"] == user_id:
                     if parcel["status"] == "IN TRANSIT":
                         profile[user['id']]["Parcels already IN TRANSIT"].append(parcel["trip"])
                     profile[user['id']]["Parcels UNDELIVERED"].append(parcel["trip"])
@@ -127,4 +125,8 @@ class User(object):
                         profile[user['id']]["Parcels CANCELED"].append(triprequest)
                 return profile
         return profile
-        
+
+
+
+
+
