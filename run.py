@@ -7,7 +7,7 @@ from flask import Flask
 from app import create_app
 
 
-app = create_app('instance.config.ProductionConfig')
+app = create_app('instance.config.DevelopmentConfig')
 
 
 @app.route('/')
