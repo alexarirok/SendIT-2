@@ -7,7 +7,7 @@ from flask_restful import Resource, Api, reqparse, inputs
 from werkzeug.security import check_password_hash
 import jwt
 
-from ..models import models
+from ..models import users, parcels
 from instance import config
 from ..utils.decorators import admin_required
 
@@ -50,14 +50,14 @@ class User_Register(Resource):
     def post(self):
         """Register a new user"""
         kwargs = self.reqparse.parse_args()
-        for user_id in models.all_users:
-            if models.all_users.get(user_id)["email"] == kwargs.get('email'):
+        for user_id in users.all_users:
+            if users.all_users.get(user_id)["email"] == kwargs.get('email'):
                 return make_response(jsonify({
                     "message" : "user with that email already exists"}), 400)
 
         if kwargs.get('password') == kwargs.get('confirm'):
             if len(kwargs.get('password')) >= 8:
-                result = models.User.create_user(username=kwargs.get('username'),
+                result = users.User.create_user(username=kwargs.get('username'),
                                                  email=kwargs.get('email'),
                                                  password=kwargs.get('password'),
                                                  usertype="user")
@@ -67,7 +67,7 @@ class User_Register(Resource):
         return make_response(jsonify({
             "message" : "password and cofirm password should be identical"}), 400)
 
-class AdminU_Register(Resource):
+class Admin_Register(Resource):
     "Contains a POST method to register a new user"
 
 
@@ -103,19 +103,19 @@ class AdminU_Register(Resource):
         super().__init__()
 
     def post(self):
-        """Register a new adminU"""
+        """Register a new admin"""
         kwargs = self.reqparse.parse_args()
-        for user_id in models.all_users:
-            if models.all_users.get(user_id)["email"] == kwargs.get('email'):
+        for user_id in users.all_users:
+            if users.all_users.get(user_id)["email"] == kwargs.get('email'):
                 return make_response(jsonify({
                     "message" : "user with that email already exists"}), 400)
 
         if kwargs.get('password') == kwargs.get('confirm'):
             if len(kwargs.get('password')) >= 8:
-                result = models.User.create_user(username=kwargs.get('username'),
+                result = users.User.create_user(username=kwargs.get('username'),
                                                  email=kwargs.get('email'),
                                                  password=kwargs.get('password'),
-                                                 usertype="adminU")
+                                                 usertype="admin")
                 return make_response(jsonify(result), 201)
             return make_response(jsonify({
                 "message" : "password should be atleast 8 characters"}), 400)
@@ -146,14 +146,14 @@ class Login(Resource):
     def post(self):
         """login a user"""
         kwargs = self.reqparse.parse_args()
-        for user_id in models.all_users:
-            if models.all_users.get(user_id)["email"] == kwargs.get("email") and \
-                check_password_hash(models.all_users.get(user_id)["password"],
+        for user_id in users.all_users:
+            if users.all_users.get(user_id)["email"] == kwargs.get("email") and \
+                check_password_hash(users.all_users.get(user_id)["password"],
                                     kwargs.get("password")):
 
                 token = jwt.encode({
                     'id' : user_id,
-                    'usertype' : models.all_users.get(user_id)['usertype'],
+                    'usertype' : users.all_users.get(user_id)['usertype'],
                     'exp' : datetime.datetime.utcnow() + datetime.timedelta(weeks=3)},
                                    config.Config.SECRET_KEY)
 
@@ -204,16 +204,16 @@ class UserList(Resource):
 
     @admin_required
     def post(self):
-        """Register a new user or adminU or admin"""
+        """Register a new user or admin or admin"""
         kwargs = self.reqparse.parse_args()
-        for user_id in models.all_users:
-            if models.all_users.get(user_id)["email"] == kwargs.get('email'):
+        for user_id in users.all_users:
+            if users.all_users.get(user_id)["email"] == kwargs.get('email'):
                 return make_response(jsonify({
                     "message" : "user with that email already exists"}), 400)
 
         if kwargs.get('password') == kwargs.get('confirm'):
             if len(kwargs.get('password')) >= 8:
-                result = models.User.create_user(username=kwargs.get('username'),
+                result = users.User.create_user(username=kwargs.get('username'),
                                                  email=kwargs.get('email'),
                                                  password=kwargs.get('password'),
                                                  usertype=kwargs.get('usertype'))
@@ -226,7 +226,7 @@ class UserList(Resource):
     @admin_required
     def get(self):
         """Get all users"""
-        return make_response(jsonify(models.User.all_users()), 200)
+        return make_response(jsonify(users.User.all_users()), 200)
 
 class User(Resource):
     """Contains GET PUT and DELETE methods for interacting with a particular user"""
@@ -272,8 +272,8 @@ class User(Resource):
     def get(self, user_id):
         """Get a particular user"""
         try:
-            user = models.all_users[user_id]
-            user = models.User.get_user(user_id)
+            user = users.all_users[user_id]
+            user = users.User.get_user(user_id)
             return make_response(jsonify(user), 200)
 
         except KeyError:
@@ -285,7 +285,7 @@ class User(Resource):
         kwargs = self.reqparse.parse_args()
         if kwargs.get('password') == kwargs.get('confirm'):
             if len(kwargs.get('password')) >= 8:
-                result = models.User.update_user(user_id=user_id,
+                result = users.User.update_user(user_id=user_id,
                                                  username=kwargs.get('username'),
                                                  email=kwargs.get('email'),
                                                  password=kwargs.get('password'),
@@ -301,15 +301,15 @@ class User(Resource):
     @admin_required
     def delete(self, user_id):
         """Delete a particular user"""
-        result = models.User.delete_user(user_id)
+        result = users.User.delete_user(user_id)
         if result != {"message" : "user does not exist"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
 
 users_api = Blueprint('resources.users', __name__)
 api = Api(users_api)
-api.add_resource(User_Register, '/auth/userregister', endpoint='userregister')
-api.add_resource(AdminU_Register, '/auth/adminUregister', endpoint='adminUregister')
+api.add_resource(User_Register, '/auth/user-register', endpoint='user-register')
+api.add_resource(Admin_Register, '/auth/admin-register', endpoint='admin-register')
 api.add_resource(Login, '/auth/login', endpoint='login')
 api.add_resource(UserList, '/users', endpoint='users')
 api.add_resource(User, '/users/<int:user_id>/parcels', endpoint='user')
