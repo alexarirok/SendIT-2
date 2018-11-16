@@ -1,20 +1,23 @@
+#from .users import all_users
+
 all_parcels = {}
 parcel_count = 1
 
 all_cancels = {}
 request_count = 1
+
 class Parcel(object):
     """Contains methods to add, update and delete a parcel"""
 
 
     @staticmethod
-    def create_parcel(pickup_location, destination_location, adminUid, date_ordered, price,
+    def create_parcel(pickup_location, destination_location, adminid, date_ordered, price,
                     max, status="UNDELIVERED"):
         """Creates a parcel and appends this information to parcels dictionary"""
         global all_parcels
         global parcel_count
         all_parcels[parcel_count] = {"id": parcel_count, "trip" : pickup_location + " to " + destination_location,
-                                 "adminU_id": adminUid, "date_ordered": date_ordered,
+                                 "admin_id": adminid, "date_ordered": date_ordered,
                                  "price": price, "max": max,
                                  "parcels" : [], "status" : status}
         new_parcel = all_parcels[parcel_count]
@@ -22,26 +25,26 @@ class Parcel(object):
         return new_parcel
 
     @staticmethod
-    def update_parcel(parcel_id, pickup_location, destination_location, adminUid, date_ordered, price, max):
+    def update_parcel(parcel_id, pickup_location, destination_location, adminid, date_ordered, price, max):
         """Updates parcel information"""
 
         if parcel_id in all_parcels.keys():
             parcels = all_parcels[parcel_id]["parcels"]
             status = all_parcels[parcel_id]["status"]
             all_parcels[parcel_id] = {"id": parcel_id, "trip" : pickup_location + " to " + destination_location,
-                                  "adminU_id": adminUid, "date_ordered": date_ordered,
+                                  "admin_id": adminid, "date_ordered": date_ordered,
                                   "price": price, "max": max,
                                   "parcels": parcels, "status" : status}
             return all_parcels[parcel_id]
         return {"message" : "parcel does not exist"}
 
     @staticmethod
-    def start_parcel_delivery(parcel_id, adminU_id):
+    def start_parcel_delivery(parcel_id, admin_id):
         """starts a parcel delivery"""
 
         if parcel_id in all_parcels.keys():
 
-            if all_parcels[parcel_id]["adminU_id"] == adminU_id:
+            if all_parcels[parcel_id]["admin_id"] == admin_id:
                 all_parcels[parcel_id]["status"] = "IN TRANSIT"
 
                 for request in all_cancels:
@@ -85,11 +88,13 @@ class Requests(object):
                                        "cancel_order": cancel_order, "status" : status}
         request_count += 1
 
-        return {"message" : "the request has been sent for approval"}
+        return {"message" : "the cancel     request has been sent for approval"}
 
     @staticmethod
     def update_request(request_id):
         """Updates request information in all_cancels dictionary"""
+        from .users import all_users
+
         max = int(all_parcels[all_cancels[request_id]["parcel_id"]]["max"])
         cancel_order = all_parcels[all_cancels[request_id]["parcel_id"]]["parcels"]
         parcels = int(len(cancel_order))
@@ -119,4 +124,3 @@ class Requests(object):
             return {"message" : "request successfully deleted"}
         except KeyError:
             return {"message" : "the specified request does not exist in cancels"}
-            
