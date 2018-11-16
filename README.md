@@ -66,8 +66,8 @@ POST   /api/v1/auth/login | Log in user
 POST   /api/v1/users | Create a user
 GET    /api/v1/users | Get all users
 GET   /api/v1/users/id/parcels | Get a single user
-PUT  /api/v1/users/id/parcels | Update a single user
-DELETE   /api/v1/users/id/parcels | Delete a single user
+PUT  /api/v1/users/id | Update a single user
+DELETE   /api/v1/users/id | Delete a single user
 POST   /api/v1/parcels | Create new parcel
 GET   /api/v1/parcels | Get all parcels
 GET   /api/v1/parcels/id | Get a single parcel
