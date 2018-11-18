@@ -1,0 +1,20 @@
+language: python
+python:
+  - "3.6.4"
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+before_script:
+  - source ./.travis.sh
+script:
+  # - python -m pytest --cov-report term-missing --cov=views
+  - pytest --cov app
+after_success:
+  - coveralls
+
+branches:
+  - Ft-User-Fetch-All-#23161836320
+  - develop
+notifications:
+
+  email: false
