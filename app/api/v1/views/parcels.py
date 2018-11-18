@@ -43,18 +43,19 @@ class ParcelList(Resource):
             location=['form', 'json'])
         super().__init__()
 
-    @admin_required
+    @user_required
     def post(self):
         """Adds a new parcel"""
         kwargs = self.reqparse.parse_args()
 
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        admin_id = data['id']
+        user_id = data['id']
 
-        result = parcels.Parcel.create_parcel(adminid=admin_id, **kwargs)
+        result = parcels.Parcel.create_parcel(userid=user_id, **kwargs)
         return make_response(jsonify(result), 201)
 
+    @admin_required
     def get(self):
         """Gets all parcels"""
         return make_response(jsonify(parcels.all_parcels), 200)
@@ -99,28 +100,28 @@ class Parcel(Resource):
         except KeyError:
             return make_response(jsonify({"message" : "parcel does not exist"}), 404)
 
-    @admin_required
+    @user_required
     def post(self, parcel_id):
         """start a particular parcel"""
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        admin_id = data['id']
+        user_id = data['id']
 
-        result = parcels.Parcel.start_parcel_delivery(parcel_id, admin_id=admin_id)
+        result = parcels.Parcel.start_parcel_delivery(parcel_id, user_id=user_id)
         if result == {"message" : "parcel delivery started"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
 
-    @admin_required
+    @user_required
     def put(self, parcel_id):
         """Update a particular parcel"""
         kwargs = self.reqparse.parse_args()
 
         token = request.headers['x-access-token']
         data = jwt.decode(token, config.Config.SECRET_KEY)
-        admin_id = data['id']
+        user_id = data['id']
 
-        result = parcels.Parcel.update_parcel(parcel_id, adminid=admin_id, **kwargs)
+        result = parcels.Parcel.update_parcel(parcel_id, userid=user_id, **kwargs)
         if result != {"message" : "parcel does not exist"}:
             return make_response(jsonify(result), 200)
         return make_response(jsonify(result), 404)
@@ -134,7 +135,7 @@ class Parcel(Resource):
         return make_response(jsonify(result), 404)
 
 class RequestParcel(Resource):
-    """Contains POST method for requsting a particular parcel"""
+    """Contains POST method for requesting a particular parcel"""
 
 
     @user_required

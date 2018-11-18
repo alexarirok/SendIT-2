@@ -11,13 +11,13 @@ class Parcel(object):
 
 
     @staticmethod
-    def create_parcel(pickup_location, destination_location, adminid, date_ordered, price,
+    def create_parcel(pickup_location, destination_location, userid, date_ordered, price,
                     max, status="UNDELIVERED"):
         """Creates a parcel and appends this information to parcels dictionary"""
         global all_parcels
         global parcel_count
         all_parcels[parcel_count] = {"id": parcel_count, "trip" : pickup_location + " to " + destination_location,
-                                 "admin_id": adminid, "date_ordered": date_ordered,
+                                 "user_id": userid, "date_ordered": date_ordered,
                                  "price": price, "max": max,
                                  "parcels" : [], "status" : status}
         new_parcel = all_parcels[parcel_count]
