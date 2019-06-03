@@ -110,7 +110,7 @@ Ensure you use Productionconfig settings which have DEBUG set to False
 
 ## GitHub pages
 
-https://Gitau.github.io/
+https://harrison-gitau.github.io/DeliverIT/UI/homepage.html
 
 ## Heroku
 
